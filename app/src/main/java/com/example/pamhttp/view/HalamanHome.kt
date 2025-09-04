@@ -25,7 +25,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,20 +38,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pamhttp.R
 import com.example.pamhttp.modeldata.DataSiswa
-import com.example.pamhttp.uicontroller.DestinasiNavigasi
+import com.example.pamhttp.uicontroller.route.DestinasiHome
+import com.example.pamhttp.uicontroller.route.DestinasiNavigasi
 import com.example.pamhttp.viewmodel.HomeViewModel
 import com.example.pamhttp.viewmodel.PenyediaViewModel
 import com.example.pamhttp.viewmodel.StatusUiSiswa
 
-object DestinasiHome : DestinasiNavigasi {
-    override val route = "home"
-    override val titleRes = R.string.app_name
-
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    navigateToItemEntry: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ){
@@ -60,15 +56,15 @@ fun HomeScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(id = R.string.app_name), color = Color.White )},
-                colors = TopAppBarDefaults.mediumTopAppBarColors(colorResource(id = R.color.purple_500)),
+            SiswaTopAppBar(
+                title = stringResource(DestinasiHome.titleRes),
+                canNavigateBack = false,
                 scrollBehavior = scrollBehavior
             )
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {},
+                onClick = navigateToItemEntry,
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
             ) {
@@ -77,7 +73,7 @@ fun HomeScreen(
                     contentDescription = stringResource(R.string.entry_siswa)
                 )
             }
-        }
+        },
     ) { innerPadding ->
         HomeBody(
             statusUiSiswa = viewModel.listSiswa,
@@ -97,14 +93,16 @@ fun HomeBody (
 ){
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
+        modifier = modifier
     ){
         when(statusUiSiswa){
             is StatusUiSiswa.Loading -> LoadingScreen()
             is StatusUiSiswa.Success -> DaftarSiswa(itemSiswa = statusUiSiswa.siswa)
             is StatusUiSiswa.Error -> ErrorScreen(
                 retryAction,
-                modifier = modifier.fillMaxSize()
+                modifier =
+
+                    modifier.fillMaxSize()
             )
         }
     }
@@ -141,7 +139,7 @@ fun DaftarSiswa (
 ){
     LazyColumn (modifier = Modifier){
         items(items =  itemSiswa, key = {it.id}) {
-            person ->
+                person ->
             ItemSiswa(
                 siswa = person,
                 modifier = Modifier
@@ -156,9 +154,9 @@ fun ItemSiswa (
     siswa: DataSiswa,
     modifier: Modifier = Modifier
 ){
-    Spacer(modifier = Modifier.padding(5.dp))
     Card (
         modifier = Modifier,
+        shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ){
         Column (
