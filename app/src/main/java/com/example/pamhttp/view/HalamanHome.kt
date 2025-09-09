@@ -142,8 +142,9 @@ fun DaftarSiswa (
                 siswa = person,
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.padding_small))
-                    .clickable {
-                    }
+                    .clickable{
+                        onSiswaClick(person)
+                    } //edit2 menjadi clickable
             )
         }
     }
