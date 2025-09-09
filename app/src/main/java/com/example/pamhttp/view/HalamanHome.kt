@@ -1,6 +1,7 @@
 package com.example.pamhttp.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,14 +24,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -39,7 +37,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pamhttp.R
 import com.example.pamhttp.modeldata.DataSiswa
 import com.example.pamhttp.uicontroller.route.DestinasiHome
-import com.example.pamhttp.uicontroller.route.DestinasiNavigasi
 import com.example.pamhttp.viewmodel.HomeViewModel
 import com.example.pamhttp.viewmodel.PenyediaViewModel
 import com.example.pamhttp.viewmodel.StatusUiSiswa
@@ -48,7 +45,6 @@ import com.example.pamhttp.viewmodel.StatusUiSiswa
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    navigateToItemEntry: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ){
@@ -77,6 +73,7 @@ fun HomeScreen(
     ) { innerPadding ->
         HomeBody(
             statusUiSiswa = viewModel.listSiswa,
+            onSiswaClick = navigateToItemUpdate,
             retryAction = viewModel::loadSiswa,
             modifier = Modifier
                 .padding(innerPadding)
@@ -97,11 +94,11 @@ fun HomeBody (
     ){
         when(statusUiSiswa){
             is StatusUiSiswa.Loading -> LoadingScreen()
-            is StatusUiSiswa.Success -> DaftarSiswa(itemSiswa = statusUiSiswa.siswa)
+            is StatusUiSiswa.Success -> DaftarSiswa(itemSiswa = statusUiSiswa.siswa,
+                onSiswaClick = {onSiswaClick(it.id)})
             is StatusUiSiswa.Error -> ErrorScreen(
                 retryAction,
                 modifier =
-
                     modifier.fillMaxSize()
             )
         }
@@ -135,6 +132,7 @@ fun ErrorScreen(retryAction: () -> Unit, modifier: Modifier = Modifier){
 @Composable
 fun DaftarSiswa (
     itemSiswa : List<DataSiswa>,
+    onSiswaClick: (DataSiswa) -> Unit, //edit 1 menambah parameter onSiswaClick
     modifier: Modifier = Modifier
 ){
     LazyColumn (modifier = Modifier){
@@ -144,6 +142,8 @@ fun DaftarSiswa (
                 siswa = person,
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.padding_small))
+                    .clickable {
+                    }
             )
         }
     }
@@ -155,12 +155,11 @@ fun ItemSiswa (
     modifier: Modifier = Modifier
 ){
     Card (
-        modifier = Modifier,
-        shape = MaterialTheme.shapes.medium,
+        modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ){
         Column (
-            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large)),
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(
                 id = R.dimen.padding_small))
         ) {
@@ -188,3 +187,4 @@ fun ItemSiswa (
         }
     }
 }
+
