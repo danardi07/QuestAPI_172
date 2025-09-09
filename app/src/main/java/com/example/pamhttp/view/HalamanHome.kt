@@ -45,6 +45,7 @@ import com.example.pamhttp.viewmodel.StatusUiSiswa
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    navigateToItemUpdate: (Int) -> Unit, // edit 4
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ){
