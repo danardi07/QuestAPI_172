@@ -85,6 +85,7 @@ fun HomeScreen(
 @Composable
 fun HomeBody (
     statusUiSiswa: StatusUiSiswa,
+    onSiswaClick: (Int) -> Unit, // edit3 menambah parameter onSiswaClick
     retryAction: () -> Unit,
     modifier: Modifier = Modifier
 ){
